@@ -28,13 +28,19 @@ The following baseline was observed in the connected Supabase project during the
 |---|---:|---|
 | Knowledge articles | 114 published | Preserve; audit quality, categories, permissions, freshness, and retrieval |
 | Response templates | 50 draft | Review, test, approve, and expand |
-| Personality presets | 12 active | Preserve; document behavior and expand carefully |
-| Vocabulary entries | 53 active | Preserve; normalize, categorize, and expand |
+| Canonical personality modes | 40 unique canonical keys, active | Requirement already represented; audit profiles and runtime integration |
+| Legacy personality presets | 9 active legacy rows | Preserve and map to canonical modes before any retirement |
+| Total personality preset rows | 49 | 40 canonical + 9 legacy; do not treat as 49 required modes |
+| Expression catalog | 120 unique sequential states, active | Inventory exists; all 120 await artwork and have no asset/animation paths |
+| Vocabulary entries | 53 active | Preserve; normalize, categorize, expand, and integrate into runtime |
 | Event automation rules | 6 draft | Review triggers, permissions, idempotency, and approvals before activation |
-| `help-buddy-chat` Edge Function | Active, version 4 | Inspect and improve without assuming generative AI is configured |
+| `help-buddy-chat` Edge Function | Active, version 4, JWT verification enabled | Existing template/knowledge/memory runtime; no generative model configured |
 | Persistent memory tables | Existing | Audit data minimization, retention, tenant scope, consent, and access |
+| Avatar Studio UI | Not found in tracked `main` source tree | Reconcile Lovable/Vercel deployment with repository before building |
 
-The current chat function was observed to use published response templates and knowledge retrieval. A configured generative-AI response path was not verified in the audit. Do not represent model integration as complete until provider configuration, secure server-side invocation, error handling, and tests have been verified.
+A read-only live audit on 2026-11-18 confirmed 40 canonical personality modes and 120 sequential expression catalog records. All 120 expression records have `asset_status=awaiting_artwork` and empty asset/animation storage paths. The 49 personality rows consist of 40 canonical records and nine active legacy records.
+
+The deployed chat function uses template example scoring, knowledge QA retrieval, and memory handling. It does not query the personality, expression, vocabulary, or event-rule catalogs and returns `generativeModel: "not-configured"`. A likely RLS mismatch was also identified: the function inserts assistant messages, while the inspected `assistant_messages` INSERT policy allows only `sender_type='user'`; verify with an authenticated integration test before remediation. The organization-scope write policy on `help_buddy_personality_preferences` also requires review to ensure only authorized admins can change shared settings.
 
 A Supabase security review also surfaced warnings, including RLS disabled on `private.readable_identifier_counters` and leaked-password protection not enabled. Recheck current findings, determine intended exposure and compatibility, and remediate through the project's approved Lovable-managed database workflow. Do not expose private schema objects or weaken security to clear warnings.
 
@@ -176,9 +182,15 @@ The detailed authoritative requirements for Help Buddy's 40 personality modes, 1
 This companion specification supersedes earlier planning assumptions that only 20 personality modes were required. It requires 40 individually configurable modes and 120 independently inventoried visual states. The live Supabase inventory is authoritative for existing records; the 2026-11-18 audit observed 12 active personality presets, so preserve and reconcile those records rather than relying on a conflicting planning count of 10.
 
 
+
+## 12. Live gap analysis and implementation plan
+
+The read-only 2026-11-18 backend, Edge Function, RLS, and tracked-repository audit is documented in [HELP_BUDDY_LIVE_GAP_ANALYSIS_AND_IMPLEMENTATION_PLAN.md](./HELP_BUDDY_LIVE_GAP_ANALYSIS_AND_IMPLEMENTATION_PLAN.md). It records current inventories, missing runtime/Studio integration, security findings, audit limitations, and the recommended phased implementation sequence. No production changes were made during that discovery audit.
+
 ---
 
 ## Change log
 
+- **2026-11-18:** Updated live baseline using current Supabase counts and linked the detailed live gap analysis/implementation plan. Confirmed 40 canonical personalities, nine legacy presets, 120 catalogued visual states awaiting artwork, and chat runtime gaps.
 - **2026-11-18:** Added companion specification covering 40 personalities, 120 visual states, emotional/social intelligence, behavior severity, personality blending, Avatar Studio, structured chat integration, administrator controls, and acceptance criteria. Updated the master specification to link to the companion document.
 - **2026-11-18:** Created initial master specification from the Help Buddy planning discussion and verified Supabase baseline. No credentials are stored in this document. The facial-expression artwork workstream is tracked separately.
