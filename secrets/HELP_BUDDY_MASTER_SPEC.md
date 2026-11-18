@@ -166,8 +166,19 @@ Before adding tables or records, inspect existing schemas, constraints, RLS poli
 7. Remediate Supabase security findings and verify authorization, tenant isolation, and audit behavior.
 8. Run evaluation and regression tests before publishing any new configuration.
 
+
+## 11. Character, personality, expression, and behavior specification
+
+The detailed authoritative requirements for Help Buddy's 40 personality modes, 120 visual states, emotional/social intelligence, severity levels, personality blending and intensity, Avatar Studio, structured chat integration, administrator controls, and acceptance tests are maintained in:
+
+- [Help Buddy Personality, Expression & Behavior Specification](./HELP_BUDDY_PERSONALITY_EXPRESSION_BEHAVIOR_SPEC.md)
+
+This companion specification supersedes earlier planning assumptions that only 20 personality modes were required. It requires 40 individually configurable modes and 120 independently inventoried visual states. The live Supabase inventory is authoritative for existing records; the 2026-11-18 audit observed 12 active personality presets, so preserve and reconcile those records rather than relying on a conflicting planning count of 10.
+
+
 ---
 
 ## Change log
 
+- **2026-11-18:** Added companion specification covering 40 personalities, 120 visual states, emotional/social intelligence, behavior severity, personality blending, Avatar Studio, structured chat integration, administrator controls, and acceptance criteria. Updated the master specification to link to the companion document.
 - **2026-11-18:** Created initial master specification from the Help Buddy planning discussion and verified Supabase baseline. No credentials are stored in this document. The facial-expression artwork workstream is tracked separately.
