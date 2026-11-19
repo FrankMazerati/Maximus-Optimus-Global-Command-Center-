@@ -2,6 +2,12 @@
   "supabase_percent": 0,
   "frontend_percent": 0,
   "images_percent": 0,
+  "verified_counts": {
+    "supabase": 0,
+    "frontend": 0,
+    "images": 0
+  },
   "overall_status": "running",
+  "source_of_truth": "sdocs/TASK_QUEUE.json",
   "linked_endpoints": []
 }
