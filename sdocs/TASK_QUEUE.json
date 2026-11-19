@@ -112,28 +112,8 @@
     {
       "id": "IM-001",
       "layer": "images",
-      "title": "Command Center brand and dashboard visual assets",
-      "spec": "Generate and integrate the unique brand/background/dashboard visuals referenced by data-prompt tags. Store generated files under public/images/, update source paths, and verify every local image path resolves.",
-      "status": "queued",
-      "attempts": 0,
-      "last_error": null,
-      "files_changed": []
-    },
-    {
-      "id": "IM-002",
-      "layer": "images",
-      "title": "Help Buddy character and expression assets",
-      "spec": "Generate the Help Buddy character base and the required distinct expression/interaction visual assets from repository data-prompt descriptions. Store uniquely named files in public/images/ and update all references.",
-      "status": "queued",
-      "attempts": 0,
-      "last_error": null,
-      "files_changed": []
-    },
-    {
-      "id": "IM-003",
-      "layer": "images",
-      "title": "Rewards, badges, and module icon assets",
-      "spec": "Generate the unique badge/reward and module visual assets referenced by data-prompt tags. Ensure filenames are unique, references are updated, and all files are present under public/images/.",
+      "title": "Generate all pending repository visual assets",
+      "spec": "Process every pending data-prompt image tag across the repository, including Command Center brand/dashboard visuals, Help Buddy character/expression visuals, rewards/badges, and module assets. Generate real image files under public/images/, replace placeholder/missing src paths, and verify every referenced local image exists.",
       "status": "queued",
       "attempts": 0,
       "last_error": null,
