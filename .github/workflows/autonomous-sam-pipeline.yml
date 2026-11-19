@@ -42,7 +42,11 @@ jobs:
           set -uo pipefail
           npm install --global @google/gemini-cli
           python -m pip install --break-system-packages aider-chat
-          npm install --no-audit --no-fund
+          if [[ -f package-lock.json ]]; then
+            npm ci --no-audit --no-fund
+          else
+            npm install --no-audit --no-fund
+          fi
 
       - name: Orchestrator Phase A and worker execution
         id: agents
