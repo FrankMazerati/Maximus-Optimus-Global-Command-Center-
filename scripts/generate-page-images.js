@@ -60,7 +60,8 @@ async function main() {
       let existing = false;
       if (currentSrc && !currentSrc.includes("placeholder") && !/^https?:\/\//i.test(currentSrc)) {
         try {
-          existing = (await fs.stat(localPath)).isFile();
+          const assetStat = await fs.stat(localPath);
+          existing = assetStat.isFile() && assetStat.size >= 1024;
         } catch {
           // A missing local asset is the reason this prompt needs generation.
         }
