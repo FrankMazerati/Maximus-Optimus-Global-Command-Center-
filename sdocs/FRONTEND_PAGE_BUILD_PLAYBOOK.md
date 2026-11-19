@@ -103,3 +103,7 @@ Before handoff:
 7. Set only the assigned task to `needs_verification`; never mark it verified or alter verified counts/status.
 
 The Orchestrator independently audits the work. A page is not verified merely because the worker says it is done.
+
+
+## 7. Homepage dashboard and Help Buddy addendum
+Read and follow `sdocs/HOMEPAGE_DASHBOARD_HELP_BUDDY_BUILD_CONTRACT.md` for the homepage, global dashboard widgets and Help Buddy. The authenticated homepage uses one blue-holographic layout with Daytime (pale blue/blue-gray/silver/glass) and Nighttime (deep navy/near-black/electric blue/cyan) themes. Theme selection must not change navigation, layout or permissions. The login page is already implemented and is not part of this rebuild. Implement global clocks with IANA timezone/DST support; source-attributed, freshness-labelled news; provider-backed stock picker/watchlist; and role/tenant-filtered Quick Picks. No fabricated live content or dead cards. Help Buddy module tabs must navigate to actual routes/pages from the master specification and support browser history, direct links, responsive behavior, safe draft/conversation state and permission enforcement. Frontend/backend responsibilities and acceptance tests are defined in the addendum.
