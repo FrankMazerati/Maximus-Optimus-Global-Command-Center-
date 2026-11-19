@@ -57,7 +57,7 @@
       "spec": "Build the responsive authenticated Command Center shell, global navigation, route structure, loading/error/empty states, and tenant-aware navigation guards. Wire every action to a documented route or schema-contract endpoint; do not add decorative dead controls.",
       "status": "queued",
       "attempts": 0,
-      "last_error": []
+      "last_error": null
     },
     {
       "id": "FE-002",
