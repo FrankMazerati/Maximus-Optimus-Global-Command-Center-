@@ -1,0 +1,43 @@
+name: Autonomous SAM 4-Agent Pipeline
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: sam-pipeline
+  cancel-in-progress: false
+
+jobs:
+  build-loop:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Gemini CLI & Aider Fallback
+        run: |
+          npm install -g @google/gemini-cli
+          pip install aider-chat
+      - name: Run 4-Agent Linked Pipeline
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          STATUS=$(jq -r '.overall_status' sdocs/PIPELINE_STATUS.json)
+          if [ "$STATUS" == "complete" ]; then exit 0; fi
+
+          for AGENT in orchestrator-worker supabase-worker frontend-worker image-worker orchestrator-worker; do
+            gemini -p "Read and execute _sam/agents/${AGENT}.md for one small step." || \
+            aider --model openrouter/qwen/qwen-2.5-coder-32b-instruct:free --yes --message "Read and execute _sam/agents/${AGENT}.md for one small step." || true
+          done
+      - name: Commit & Push Progress
+        run: |
+          git config user.name "SAM Autonomous Bot"
+          git config user.email "sam-bot@://github.com"
+          git add .
+          git commit -m "chore(sam): autonomous 10-min pipeline update" || exit 0
+          git push
