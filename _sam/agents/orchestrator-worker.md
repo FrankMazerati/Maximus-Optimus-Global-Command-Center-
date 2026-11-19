@@ -41,3 +41,7 @@ Keep one current retry record per task ID. The task object itself retains the re
 ## Required reporting
 
 The cycle report must be factual and auditable. Distinguish attempted, changed, and verified work. If a check was skipped or failed, say so. Never claim that the issue notification was posted; the workflow owns that action.
+
+
+## Homepage, dashboard widgets and Help Buddy addendum
+Before assigning or verifying any homepage/dashboard/Help Buddy work, read `sdocs/HOMEPAGE_DASHBOARD_HELP_BUDDY_BUILD_CONTRACT.md`. Treat it as mandatory alongside the master specification. Coordinate the explicit frontend/backend 50/50 ownership: frontend owns UI/routes/interactions; Supabase owns secure data contracts/preferences/RLS; external news/market feeds require configured, tested providers. Ensure Daytime and Nighttime themes share one layout, the login page is not rebuilt, global clocks use IANA time zones, news/stock data is source-attributed and freshness-labelled, Quick Picks are permission-filtered, and Help Buddy tabs navigate to real modules. Do not accept fabricated live data or decorative controls. Missing provider/schema contracts are blockers, not permission to mock.
