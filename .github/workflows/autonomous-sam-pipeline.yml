@@ -126,13 +126,15 @@ jobs:
         if: always()
         continue-on-error: true
         env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           BUILD_STATUS: ${{ steps.verify.outputs.build_status || 'not_run' }}
           LINT_STATUS: ${{ steps.verify.outputs.lint_status || 'not_run' }}
           TEST_STATUS: ${{ steps.verify.outputs.test_status || 'not_run' }}
         shell: bash
         run: |
           set -uo pipefail
-          PROMPT="Read _sam/agents/orchestrator-worker.md and execute Phase B only. Independently inspect actual files and git diff; verify schema, every frontend action against sdocs/schema-contract.md, and every local image path. Build statuses from the workflow are BUILD_STATUS=$BUILD_STATUS, LINT_STATUS=$LINT_STATUS, TEST_STATUS=$TEST_STATUS. Only mark tasks verified when evidence and all checks pass. Update derived sdocs/PIPELINE_STATUS.json and append exactly one complete structured entry to sdocs/CYCLE_REPORTS.md. Never claim complete unless every task is verified and npm run build passed."
+          PROMPT="Read _sam/agents/orchestrator-worker.md and execute Phase B only. Independently inspect actual files and git diff; verify schema, every frontend action against sdocs/schema-contract.md, and every local image path. Build statuses from the workflow are BUILD_STATUS=$BUILD_STATUS, LINT_STATUS=$LINT_STATUS, TEST_STATUS=$TEST_STATUS. Include the exact GitHub Actions run ID $GITHUB_RUN_ID in the report entry under a Run ID field. Only mark tasks verified when evidence and all checks pass. Update derived sdocs/PIPELINE_STATUS.json and append exactly one complete structured entry to sdocs/CYCLE_REPORTS.md. Never claim complete unless every task is verified and npm run build passed."
 
           if command -v gemini >/dev/null 2>&1 && gemini --yolo -p "$PROMPT"; then
             echo "Supervisor Phase B completed."
@@ -144,6 +146,7 @@ jobs:
           fi
 
       - name: Commit and push verified cycle state to main
+        id: commit
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
@@ -163,7 +166,7 @@ jobs:
           git push origin HEAD:main
 
       - name: Post latest cycle report to GitHub progress issue
-        if: always()
+        if: always() && steps.supervisor.outcome == 'success' && steps.commit.conclusion == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
