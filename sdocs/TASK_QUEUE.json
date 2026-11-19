@@ -5,8 +5,8 @@
       "layer": "supabase",
       "title": "Secure identity, tenant isolation, and role permissions",
       "spec": "Implement the Supabase auth/profile foundation for employees, businesses, tenants, and platform administrators. Include SQL migrations, tenant-scoped foreign keys and indexes, RLS policies for every exposed table, and server-side role checks. Document exact tables, columns, relationships, and callable functions in sdocs/schema-contract.md. Never trust client-supplied tenant or role identifiers.",
-      "status": "queued",
-      "attempts": 0,
+      "status": "in_progress",
+      "attempts": 2,
       "last_error": null,
       "files_changed": []
     },
@@ -55,9 +55,9 @@
       "layer": "frontend",
       "title": "Global Command Center application shell and navigation",
       "spec": "Build the application shell/header and then deliver up to five consecutive complete page destinations per 10-minute cycle, starting with the top-level menu, its first workspace submenu and pages, then proceeding workspace-by-workspace in approved order. Follow sdocs/FRONTEND_PAGE_BUILD_PLAYBOOK.md and sdocs/FRONTEND_BUILD_PROGRESS.json. Five is a maximum target, not a reason to ship incomplete pages. Wire all actions to real schema-contract endpoints; record the sequence cursor and only hand off as needs_verification. Also implement the authenticated blue-holographic homepage shell with Daytime/Nighttime themes and compact global clocks, provider-backed news/stock widgets, and permission-filtered Quick Picks per sdocs/HOMEPAGE_DASHBOARD_HELP_BUDDY_BUILD_CONTRACT.md. Login page is already implemented; do not rebuild it.",
-      "status": "queued",
-      "attempts": 0,
-      "last_error": null,
+      "status": "retry_queue",
+      "attempts": 1,
+      "last_error": "No implementation detected.",
       "files_changed": []
     },
     {
@@ -115,9 +115,9 @@
       "layer": "images",
       "title": "Generate all pending repository visual assets",
       "spec": "Process all pending data-prompt image tags across the entire repository using scripts/generate-page-images.js. Before generating, read sdocs/IMAGE_REFERENCE_GUIDE.md and use the committed reference masters under public/images/reference/ for character, robot, hologram, lighting, and Command Center continuity. The two source JPGs must exist in the repository; ChatGPT attachments are not automatically available to GitHub Actions. Generate real local assets under public/images/, update src paths, and verify every referenced file.",
-      "status": "queued",
-      "attempts": 0,
-      "last_error": null,
+      "status": "retry_queue",
+      "attempts": 1,
+      "last_error": "No implementation detected.",
       "files_changed": []
     },
     {
@@ -151,7 +151,20 @@
       "files_changed": []
     }
   ],
-  "retry_queue": [],
+  "retry_queue": [
+    {
+      "task_id": "FE-001",
+      "error": "No implementation detected.",
+      "diagnostics": "No changes were detected in the file system related to this task. Worker likely did not run or failed silently.",
+      "queued_at": "2026-11-19T09:34:23Z"
+    },
+    {
+      "task_id": "IM-001",
+      "error": "No implementation detected.",
+      "diagnostics": "No changes were detected in the file system related to this task. Worker likely did not run or failed silently.",
+      "queued_at": "2026-11-19T09:34:23Z"
+    }
+  ],
   "verified_counts": {
     "supabase": 0,
     "frontend": 0,
