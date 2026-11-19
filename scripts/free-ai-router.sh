@@ -103,7 +103,7 @@ else echo "Relay 11 skipped: requires ALLOW_PAID_AI=true and HF_TOKEN."; fi
 
 # Relay 12 — Cohere Command R+; production keys are billed.
 if [[ "$PAID_AI_ENABLED" == "true" ]] && [[ -n "${COHERE_API_KEY:-}" ]] && command -v aider >/dev/null 2>&1; then
-  CO_API_KEY="$COHERE_API_KEY" try_aider 12 "Cohere / command-r-plus-08-2024" "cohere/command-r-plus-08-2024" && exit 0
+  COHERE_API_KEY="$COHERE_API_KEY" try_aider 12 "Cohere / command-r-plus-08-2024" "command-r-plus-08-2024" && exit 0
 else echo "Relay 12 skipped: requires ALLOW_PAID_AI=true and COHERE_API_KEY."; fi
 
 # Relay 13 — NVIDIA NIM OpenAI-compatible endpoint; check account pricing/credits.
