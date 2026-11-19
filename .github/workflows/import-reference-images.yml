@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths:
       - "maximus-optimus-reference-images.zip"
+      - "Frank-Mazerati-QA-Robots-Reference.jpg"
+      - "Maximus-Optimus-Command-Center-Scene-Reference.jpg"
+      - ".github/workflows/import-reference-images.yml"
   workflow_dispatch:
 
 permissions:
@@ -20,25 +23,30 @@ jobs:
           ref: main
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract approved visual references
+      - name: Place approved visual references in their folder
         shell: bash
         run: |
           set -euo pipefail
-          ZIP="maximus-optimus-reference-images.zip"
-          if [ ! -f "$ZIP" ]; then
-            echo "::error::Upload $ZIP to the repository root on main, then rerun this workflow."
-            exit 1
-          fi
-          mkdir -p /tmp/maximus-reference-import
-          unzip -o "$ZIP" -d /tmp/maximus-reference-import
           mkdir -p public/images/reference
-          find /tmp/maximus-reference-import -type f \\( \
-            -name "Frank-Mazerati-QA-Robots-Reference.jpg" -o \
-            -name "Maximus-Optimus-Command-Center-Scene-Reference.jpg" \
-          \\) -exec cp {} public/images/reference/ \\;
+          if [ -f "maximus-optimus-reference-images.zip" ]; then
+            mkdir -p /tmp/maximus-reference-import
+            unzip -o "maximus-optimus-reference-images.zip" -d /tmp/maximus-reference-import
+            find /tmp/maximus-reference-import -type f \\( \
+              -name "Frank-Mazerati-QA-Robots-Reference.jpg" -o \
+              -name "Maximus-Optimus-Command-Center-Scene-Reference.jpg" \
+            \\) -exec cp {} public/images/reference/ \\;
+          fi
+          for file in \
+            "Frank-Mazerati-QA-Robots-Reference.jpg" \
+            "Maximus-Optimus-Command-Center-Scene-Reference.jpg"; do
+            if [ -f "$file" ]; then
+              cp "$file" public/images/reference/
+            fi
+          done
           test -s public/images/reference/Frank-Mazerati-QA-Robots-Reference.jpg
           test -s public/images/reference/Maximus-Optimus-Command-Center-Scene-Reference.jpg
-          rm "$ZIP"
+          rm -f maximus-optimus-reference-images.zip
+          rm -f Frank-Mazerati-QA-Robots-Reference.jpg Maximus-Optimus-Command-Center-Scene-Reference.jpg
 
       - name: Commit imported references
         shell: bash
@@ -46,10 +54,10 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/images/reference/ maximus-optimus-reference-images.zip
+          git add -A public/images/reference/ maximus-optimus-reference-images.zip Frank-Mazerati-QA-Robots-Reference.jpg Maximus-Optimus-Command-Center-Scene-Reference.jpg
           if git diff --cached --quiet; then
             echo "No reference-image changes to commit."
             exit 0
           fi
-          git commit -m "assets: import Command Center visual reference images"
+          git commit -m "assets: organize Command Center visual reference images"
           git push origin HEAD:main
