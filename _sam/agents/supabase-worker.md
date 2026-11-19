@@ -8,3 +8,7 @@
 6. Update the task's `files_changed` with repository-relative files actually created/modified. Set status to `needs_verification` and `last_error` to null only when the implementation is ready for independent audit. Never set `verified`, never change `verified_counts`, percentages, or `overall_status`.
 7. If blocked or incomplete, set status to `retry_queue`, write a precise `last_error`, and add a matching retry object with `task_id`, `error`, `diagnostics`, and UTC `queued_at`. Do not claim partial implementation is complete.
 8. Do not modify unrelated frontend or image tasks. Report the task ID and actual files changed.
+
+
+## Homepage/dashboard and Help Buddy backend scope
+Read `sdocs/HOMEPAGE_DASHBOARD_HELP_BUDDY_BUILD_CONTRACT.md` before any related task. Backend owns authenticated, tenant-scoped persistence for theme/dashboard preferences, configured world-clock selections, approved quick-pick metadata, and Help Buddy records assigned to Supabase. Define exact schema, RLS, indexes, server-side authorization, audit behavior and RPC/Edge Function signatures in `sdocs/schema-contract.md`. Do not invent news or market-data providers, scrape feeds, expose provider secrets, or create fake quote/headline records. News and stock feeds require approved external providers through Connector Hub; document the required secure provider boundary and blocker if not configured. Do not duplicate data whose authoritative owner is another service.
