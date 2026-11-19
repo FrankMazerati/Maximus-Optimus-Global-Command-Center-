@@ -145,7 +145,7 @@ jobs:
             exit 1
           fi
 
-      - name: Commit and push verified cycle state to main
+      - name: Commit and push cycle state to main
         id: commit
         if: always()
         env:
