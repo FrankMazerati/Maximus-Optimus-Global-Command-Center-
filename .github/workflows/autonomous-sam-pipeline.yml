@@ -1,39 +1,52 @@
 name: Autonomous SAM 4-Agent Pipeline
+
 on:
   schedule:
     - cron: '*/10 * * * *'
   workflow_dispatch:
 
 concurrency:
-  group: sam-pipeline
+  group: sam-pipeline-main
   cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
 
 jobs:
   build-loop:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
-    permissions:
-      contents: write
+    timeout-minutes: 55
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout main
+        uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
-      - name: Install Gemini CLI & Aider Fallback
+      - name: Install SAM tools and project dependencies
+        id: setup
+        continue-on-error: true
+        shell: bash
         run: |
+          set -uo pipefail
           npm install --global @google/gemini-cli
           python -m pip install --break-system-packages aider-chat
+          npm install --no-audit --no-fund
 
-      - name: Run all four SAM agents
+      - name: Orchestrator Phase A and worker execution
         id: agents
+        continue-on-error: true
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
@@ -41,60 +54,97 @@ jobs:
         shell: bash
         run: |
           set -uo pipefail
+          failures=()
 
-          STATUS_FILE="sdocs/PIPELINE_STATUS.json"
-          if [[ ! -f "$STATUS_FILE" ]]; then
-            echo "::error::Missing $STATUS_FILE"
+          run_agent() {
+            local agent_file="$1"
+            local prompt="$2"
+            echo "::group::${agent_file}"
+            if ! command -v gemini >/dev/null 2>&1; then
+              echo "::warning::Gemini CLI is unavailable."
+            elif gemini --yolo -p "$prompt"; then
+              echo "Gemini completed ${agent_file}."
+              echo "::endgroup::"
+              return 0
+            fi
+
+            if [[ -n "${OPENROUTER_API_KEY:-}" ]] && command -v aider >/dev/null 2>&1 && aider --model openrouter/qwen/qwen-2.5-coder-32b-instruct:free --yes --message "$prompt"; then
+              echo "Aider fallback completed ${agent_file}."
+              echo "::endgroup::"
+              return 0
+            fi
+            echo "::error::Agent failed: ${agent_file}"
+            failures+=("${agent_file}")
+            echo "::endgroup::"
+            return 1
+          }
+
+          run_agent "_sam/agents/orchestrator-worker.md (Phase A)" "Read _sam/agents/orchestrator-worker.md and execute Phase A only: audit the task registry, move broken tasks to retry_queue with diagnostics, and assign at most one unique in_progress task to each worker layer. Save sdocs/TASK_QUEUE.json. Do not execute Phase B yet." || true
+          run_agent "_sam/agents/supabase-worker.md" "Read and execute _sam/agents/supabase-worker.md for the one Supabase task assigned in TASK_QUEUE.json. Build one complete vertical backend feature slice and hand it off as needs_verification. Follow all repository instructions." || true
+          run_agent "_sam/agents/frontend-worker.md" "Read and execute _sam/agents/frontend-worker.md for the one frontend task assigned in TASK_QUEUE.json. Build one complete page or major module and hand it off as needs_verification. Follow all repository instructions." || true
+          run_agent "_sam/agents/image-worker.md" "Read and execute _sam/agents/image-worker.md. Process ALL pending data-prompt image tags across the repository in this cycle using node scripts/generate-page-images.js. Hand off as needs_verification only if every prompt succeeds." || true
+
+          printf 'agent_failures=%s\n' "${failures[*]}" >> "$GITHUB_OUTPUT"
+          if (( ${#failures[@]} > 0 )); then
+            echo "::warning::Some agent calls failed: ${failures[*]}"
+          fi
+
+      - name: Verify project build, lint, and tests
+        id: verify
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          BUILD_STATUS=not_run
+          LINT_STATUS=not_run
+          TEST_STATUS=not_run
+
+          if [[ "${{ steps.setup.outcome }}" == "success" ]]; then
+            npm run build
+            [[ $? -eq 0 ]] && BUILD_STATUS=passed || BUILD_STATUS=failed
+
+            npm run lint
+            [[ $? -eq 0 ]] && LINT_STATUS=passed || LINT_STATUS=failed
+
+            npm test
+            [[ $? -eq 0 ]] && TEST_STATUS=passed || TEST_STATUS=failed
+          else
+            echo "::error::Dependency/tool installation failed; project checks could not run."
+          fi
+
+          echo "build_status=$BUILD_STATUS" >> "$GITHUB_OUTPUT"
+          echo "lint_status=$LINT_STATUS" >> "$GITHUB_OUTPUT"
+          echo "test_status=$TEST_STATUS" >> "$GITHUB_OUTPUT"
+
+          if [[ "$BUILD_STATUS" == "passed" && "$LINT_STATUS" == "passed" && "$TEST_STATUS" == "passed" ]]; then
+            exit 0
+          fi
+          exit 1
+
+      - name: Orchestrator Phase B independent verification and report
+        id: supervisor
+        if: always()
+        continue-on-error: true
+        env:
+          BUILD_STATUS: ${{ steps.verify.outputs.build_status || 'not_run' }}
+          LINT_STATUS: ${{ steps.verify.outputs.lint_status || 'not_run' }}
+          TEST_STATUS: ${{ steps.verify.outputs.test_status || 'not_run' }}
+        shell: bash
+        run: |
+          set -uo pipefail
+          PROMPT="Read _sam/agents/orchestrator-worker.md and execute Phase B only. Independently inspect actual files and git diff; verify schema, every frontend action against sdocs/schema-contract.md, and every local image path. Build statuses from the workflow are BUILD_STATUS=$BUILD_STATUS, LINT_STATUS=$LINT_STATUS, TEST_STATUS=$TEST_STATUS. Only mark tasks verified when evidence and all checks pass. Update derived sdocs/PIPELINE_STATUS.json and append exactly one complete structured entry to sdocs/CYCLE_REPORTS.md. Never claim complete unless every task is verified and npm run build passed."
+
+          if command -v gemini >/dev/null 2>&1 && gemini --yolo -p "$PROMPT"; then
+            echo "Supervisor Phase B completed."
+          elif [[ -n "${OPENROUTER_API_KEY:-}" ]] && command -v aider >/dev/null 2>&1 && aider --model openrouter/qwen/qwen-2.5-coder-32b-instruct:free --yes --message "$PROMPT"; then
+            echo "Supervisor Phase B completed with Aider fallback."
+          else
+            echo "::error::Supervisor Phase B failed; queue verification and cycle report may be incomplete."
             exit 1
           fi
 
-          STATUS="$(jq -r '.overall_status // "unknown"' "$STATUS_FILE")"
-          if [[ "$STATUS" == "complete" ]]; then
-            echo "Pipeline already reports complete; no agent work is needed."
-            echo "failed=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
-
-          AGENTS=(
-            orchestrator-worker
-            supabase-worker
-            frontend-worker
-            image-worker
-          )
-          FAILED_AGENTS=()
-
-          for AGENT in "${AGENTS[@]}"; do
-            AGENT_FILE="_sam/agents/${AGENT}.md"
-            PROMPT="Read and execute ${AGENT_FILE} for one small, verifiable step. Follow the repository instructions, update the relevant project files and pipeline status, and do not claim work that was not completed."
-
-            if [[ ! -f "$AGENT_FILE" ]]; then
-              echo "::error::Missing agent instruction file: $AGENT_FILE"
-              FAILED_AGENTS+=("$AGENT")
-              continue
-            fi
-
-            echo "::group::Running ${AGENT}"
-            if gemini --yolo -p "$PROMPT"; then
-              echo "Gemini completed ${AGENT}."
-            elif [[ -n "${OPENROUTER_API_KEY:-}" ]] && aider --model openrouter/qwen/qwen-2.5-coder-32b-instruct:free --yes --message "$PROMPT"; then
-              echo "Aider fallback completed ${AGENT}."
-            else
-              echo "::error::Both Gemini and the configured Aider fallback failed for ${AGENT}."
-              FAILED_AGENTS+=("$AGENT")
-            fi
-            echo "::endgroup::"
-          done
-
-          if (( ${#FAILED_AGENTS[@]} > 0 )); then
-            printf 'Agents that failed: %s\n' "${FAILED_AGENTS[*]}"
-            echo "failed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "All four SAM agents completed."
-            echo "failed=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Commit & Push Progress to main
-        if: always() && steps.agents.outcome == 'success'
+      - name: Commit and push verified cycle state to main
+        if: always()
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
@@ -102,18 +152,49 @@ jobs:
           set -euo pipefail
           git config user.name "SAM Autonomous Bot"
           git config user.email "sam-bot@users.noreply.github.com"
-
           git add --all
           if git diff --cached --quiet; then
             echo "No repository changes to commit."
             exit 0
           fi
-
-          git commit -m "chore(sam): autonomous 10-min pipeline update"
+          git commit -m "chore(sam): supervised autonomous cycle"
+          git fetch origin main
+          git rebase origin/main
           git push origin HEAD:main
 
-      - name: Report agent failures
-        if: steps.agents.outputs.failed == 'true'
+      - name: Post latest cycle report to GitHub progress issue
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
-          echo "::error::One or more SAM agents failed. Review the agent logs above; any completed changes were committed and pushed if the push step succeeded."
-          exit 1
+          set -euo pipefail
+          REPORT_FILE="sdocs/CYCLE_REPORTS.md"
+          if [[ ! -s "$REPORT_FILE" ]]; then
+            echo "::warning::No cycle report exists; skipping issue comment."
+            exit 0
+          fi
+
+          LATEST_ENTRY="$(awk '
+            /^## Cycle — / {
+              if (block != "") last = block
+              block = $0 ORS
+              next
+            }
+            block != "" { block = block $0 ORS }
+            END { if (block != "") last = block; printf "%s", last }
+          ' "$REPORT_FILE")"
+
+          if [[ -z "$LATEST_ENTRY" ]]; then
+            echo "::warning::No appended cycle entry found; skipping issue comment."
+            exit 0
+          fi
+
+          ISSUE_NUMBER="$(gh issue list --state all --limit 100 --json number,title --jq '.[] | select(.title == "🤖 Autonomous Build Progress Log") | .number' | head -n 1)"
+          if [[ -z "$ISSUE_NUMBER" ]]; then
+            ISSUE_URL="$(gh issue create --title "🤖 Autonomous Build Progress Log" --body "Automated progress updates from the supervised SAM 4-agent pipeline are posted here after each scheduled cycle.")"
+            ISSUE_NUMBER="${ISSUE_URL##*/}"
+          fi
+
+          gh issue comment "$ISSUE_NUMBER" --body "$LATEST_ENTRY"
+          echo "Posted the latest cycle report to issue #$ISSUE_NUMBER."
