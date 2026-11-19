@@ -1,5 +1,8 @@
+/* global console, fetch, AbortSignal */
+import { Buffer } from "node:buffer";
 import { createHash } from "node:crypto";
 import { promises as fs } from "node:fs";
+import process from "node:process";
 import path from "node:path";
 
 const ROOT = process.cwd();
@@ -40,7 +43,6 @@ async function main() {
   await fs.mkdir(IMAGE_DIR, { recursive: true });
   const sourceFiles = await walk(ROOT);
   let processed = 0;
-  let pending = 0;
   const failures = [];
 
   for (const file of sourceFiles) {
@@ -57,11 +59,14 @@ async function main() {
         : path.resolve(path.dirname(file), currentSrc);
       let existing = false;
       if (currentSrc && !currentSrc.includes("placeholder") && !/^https?:\/\//i.test(currentSrc)) {
-        try { existing = (await fs.stat(localPath)).isFile(); } catch {}
+        try {
+          existing = (await fs.stat(localPath)).isFile();
+        } catch {
+          // A missing local asset is the reason this prompt needs generation.
+        }
       }
       if (existing) continue;
 
-      pending++;
       const digest = createHash("sha256").update(prompt.trim()).digest("hex").slice(0, 10);
       const filenameBase = slug(prompt);
       const url = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt.trim()) + "?width=1200&height=800&nologo=true";
