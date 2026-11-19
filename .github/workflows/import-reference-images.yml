@@ -1,0 +1,55 @@
+name: Import Command Center Reference Images
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "maximus-optimus-reference-images.zip"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  import-reference-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract approved visual references
+        shell: bash
+        run: |
+          set -euo pipefail
+          ZIP="maximus-optimus-reference-images.zip"
+          if [ ! -f "$ZIP" ]; then
+            echo "::error::Upload $ZIP to the repository root on main, then rerun this workflow."
+            exit 1
+          fi
+          mkdir -p /tmp/maximus-reference-import
+          unzip -o "$ZIP" -d /tmp/maximus-reference-import
+          mkdir -p public/images/reference
+          find /tmp/maximus-reference-import -type f \\( \
+            -name "Frank-Mazerati-QA-Robots-Reference.jpg" -o \
+            -name "Maximus-Optimus-Command-Center-Scene-Reference.jpg" \
+          \\) -exec cp {} public/images/reference/ \\;
+          test -s public/images/reference/Frank-Mazerati-QA-Robots-Reference.jpg
+          test -s public/images/reference/Maximus-Optimus-Command-Center-Scene-Reference.jpg
+          rm "$ZIP"
+
+      - name: Commit imported references
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/images/reference/ maximus-optimus-reference-images.zip
+          if git diff --cached --quiet; then
+            echo "No reference-image changes to commit."
+            exit 0
+          fi
+          git commit -m "assets: import Command Center visual reference images"
+          git push origin HEAD:main
