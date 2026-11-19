@@ -94,7 +94,7 @@ jobs:
           fi
 
       - name: Commit & Push Progress to main
-        if: always()
+        if: always() && steps.agents.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: bash
