@@ -103,7 +103,7 @@ jobs:
               npm run lint && LINT_STATUS=passed || LINT_STATUS=failed
             fi
             if npm run | grep -qE '^[[:space:]]+test([[:space:]]|$)'; then
-              npm test -- --runInBand && TEST_STATUS=passed || TEST_STATUS=failed
+              npm test && TEST_STATUS=passed || TEST_STATUS=failed
             fi
           fi
 
