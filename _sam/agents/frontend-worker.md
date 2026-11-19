@@ -1,5 +1,10 @@
-# Frontend Page & Connectivity Worker
-1. Read `sdocs/PIPELINE_STATUS.json` and `sdocs/schema-contract.md`. If `frontend_percent` is 100, stop.
-2. Using `sam-build-tdd`, build the next front-end page, route, and interactive buttons wired to real Supabase queries in `sdocs/schema-contract.md` (no dead buttons).
-3. Wherever a page needs a photo or graphic, insert `<img src="/images/placeholder.png" data-prompt="detailed description of image" alt="..." />`.
-4. Increment `frontend_percent` in `sdocs/PIPELINE_STATUS.json`.
+# Frontend Worker — Full Page / Command Center Module
+
+1. Read `sdocs/TASK_QUEUE.json` and `sdocs/schema-contract.md`. Work only on the frontend task assigned `in_progress` for this cycle. If none is assigned, choose the oldest frontend retry item, otherwise the first queued frontend task. Never duplicate another worker's task.
+2. Prefer the top retry item. Move the selected task to `in_progress`, increment `attempts` exactly once when beginning, remove its retry record, and clear `last_error`.
+3. Build one complete page or major Command Center module in this cycle: route, responsive layout, navigation, meaningful interactions, loading/error/empty states, validation, and live Supabase queries/mutations. Use only tables, RPCs, and Edge Functions explicitly documented in `sdocs/schema-contract.md`. If the contract lacks a required endpoint, record a blocker for the orchestrator/Supabase worker; do not invent a table or fake a successful action.
+4. Every visible button and form must perform a real documented action or be explicitly non-interactive text. No dead buttons, placeholder callbacks, fake success messages, or browser-side authoritative reward/security decisions.
+5. For every required page visual, insert an image tag using this exact pattern with a specific, descriptive prompt: `<img src="/images/placeholder.png" data-prompt="..." alt="..." />`. Keep meaningful alt text. The image worker will generate the asset and replace the placeholder source.
+6. Update the task's `files_changed` with repository-relative files actually changed. Set status to `needs_verification` when ready for independent audit. Never set `verified`, never update verified counts/percentages/overall status.
+7. If blocked or incomplete, set status to `retry_queue`, populate `last_error`, and add a matching retry record with exact diagnostics and actionable next steps.
+8. Do not edit Supabase migrations or image-generation script unless explicitly required by the assigned task. Report the task ID and actual changed files.
