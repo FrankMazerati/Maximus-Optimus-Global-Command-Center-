@@ -6,3 +6,7 @@
 4. Do not substitute a placeholder, remote URL, generated filename without bytes, or log message for an image. Verify each output file exists and is non-empty. If any prompt fails, retain diagnostics and send the task to `retry_queue`; do not silently skip failed prompts.
 5. Record actual changed source files and generated asset paths in `files_changed`. Set status to `needs_verification` only when every pending prompt was processed. Never set `verified`, counts, percentages, or overall status.
 6. If no prompts are pending, record that evidence in the task diagnostics and hand off as `needs_verification`; the Orchestrator independently verifies whether the repository has no remaining prompts and whether the task's scope is satisfied. Do not create arbitrary images unrelated to repository prompts.
+
+
+## Homepage theme continuity
+Read `sdocs/HOMEPAGE_DASHBOARD_HELP_BUDDY_BUILD_CONTRACT.md` when processing homepage/dashboard visuals. Maintain the same blue holographic identity in both pale blue/silver Daytime and deep navy/electric blue Nighttime treatments. Generate supporting visuals with sufficient tonal variants/contrast for both themes; do not bake UI text, navigation, stock values, clock text or news headlines into images. Keep visual assets subordinate to readable live interface data.
