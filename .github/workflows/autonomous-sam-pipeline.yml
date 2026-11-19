@@ -11,33 +11,109 @@ concurrency:
 jobs:
   build-loop:
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
       - name: Install Gemini CLI & Aider Fallback
         run: |
-          npm install -g @google/gemini-cli
-          pip install aider-chat
-      - name: Run 4-Agent Linked Pipeline
+          npm install --global @google/gemini-cli
+          python -m pip install --break-system-packages aider-chat
+
+      - name: Run all four SAM agents
+        id: agents
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GEMINI_CLI_TRUST_WORKSPACE: 'true'
+        shell: bash
         run: |
-          STATUS=$(jq -r '.overall_status' sdocs/PIPELINE_STATUS.json)
-          if [ "$STATUS" == "complete" ]; then exit 0; fi
+          set -uo pipefail
 
-          for AGENT in orchestrator-worker supabase-worker frontend-worker image-worker orchestrator-worker; do
-            gemini -p "Read and execute _sam/agents/${AGENT}.md for one small step." || \
-            aider --model openrouter/qwen/qwen-2.5-coder-32b-instruct:free --yes --message "Read and execute _sam/agents/${AGENT}.md for one small step." || true
+          STATUS_FILE="sdocs/PIPELINE_STATUS.json"
+          if [[ ! -f "$STATUS_FILE" ]]; then
+            echo "::error::Missing $STATUS_FILE"
+            exit 1
+          fi
+
+          STATUS="$(jq -r '.overall_status // "unknown"' "$STATUS_FILE")"
+          if [[ "$STATUS" == "complete" ]]; then
+            echo "Pipeline already reports complete; no agent work is needed."
+            echo "failed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          AGENTS=(
+            orchestrator-worker
+            supabase-worker
+            frontend-worker
+            image-worker
+          )
+          FAILED_AGENTS=()
+
+          for AGENT in "${AGENTS[@]}"; do
+            AGENT_FILE="_sam/agents/${AGENT}.md"
+            PROMPT="Read and execute ${AGENT_FILE} for one small, verifiable step. Follow the repository instructions, update the relevant project files and pipeline status, and do not claim work that was not completed."
+
+            if [[ ! -f "$AGENT_FILE" ]]; then
+              echo "::error::Missing agent instruction file: $AGENT_FILE"
+              FAILED_AGENTS+=("$AGENT")
+              continue
+            fi
+
+            echo "::group::Running ${AGENT}"
+            if gemini --yolo -p "$PROMPT"; then
+              echo "Gemini completed ${AGENT}."
+            elif [[ -n "${OPENROUTER_API_KEY:-}" ]] && aider --model openrouter/qwen/qwen-2.5-coder-32b-instruct:free --yes --message "$PROMPT"; then
+              echo "Aider fallback completed ${AGENT}."
+            else
+              echo "::error::Both Gemini and the configured Aider fallback failed for ${AGENT}."
+              FAILED_AGENTS+=("$AGENT")
+            fi
+            echo "::endgroup::"
           done
-      - name: Commit & Push Progress
+
+          if (( ${#FAILED_AGENTS[@]} > 0 )); then
+            printf 'Agents that failed: %s\n' "${FAILED_AGENTS[*]}"
+            echo "failed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "All four SAM agents completed."
+            echo "failed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit & Push Progress to main
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
         run: |
+          set -euo pipefail
           git config user.name "SAM Autonomous Bot"
-          git config user.email "sam-bot@://github.com"
-          git add .
-          git commit -m "chore(sam): autonomous 10-min pipeline update" || exit 0
-          git push
+          git config user.email "sam-bot@users.noreply.github.com"
+
+          git add --all
+          if git diff --cached --quiet; then
+            echo "No repository changes to commit."
+            exit 0
+          fi
+
+          git commit -m "chore(sam): autonomous 10-min pipeline update"
+          git push origin HEAD:main
+
+      - name: Report agent failures
+        if: steps.agents.outputs.failed == 'true'
+        run: |
+          echo "::error::One or more SAM agents failed. Review the agent logs above; any completed changes were committed and pushed if the push step succeeded."
+          exit 1
