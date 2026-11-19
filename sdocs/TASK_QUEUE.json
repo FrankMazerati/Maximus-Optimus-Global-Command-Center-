@@ -1,0 +1,150 @@
+{
+  "tasks": [
+    {
+      "id": "SB-001",
+      "layer": "supabase",
+      "title": "Secure identity, tenant isolation, and role permissions",
+      "spec": "Implement the Supabase auth/profile foundation for employees, businesses, tenants, and platform administrators. Include SQL migrations, tenant-scoped foreign keys and indexes, RLS policies for every exposed table, and server-side role checks. Document exact tables, columns, relationships, and callable functions in sdocs/schema-contract.md. Never trust client-supplied tenant or role identifiers.",
+      "status": "queued",
+      "attempts": 0,
+      "last_error": null,
+      "files_changed": []
+    },
+    {
+      "id": "SB-002",
+      "layer": "supabase",
+      "title": "Employee directory and workload capacity",
+      "spec": "Create the employee directory and workload model needed to route work to the eligible employee with the least outstanding workload. Include migrations, indexes, tenant-aware RLS, assignment/workload update functions, and contract documentation.",
+      "status": "queued",
+      "attempts": 0,
+      "last_error": null,
+      "files_changed": []
+    },
+    {
+      "id": "SB-003",
+      "layer": "supabase",
+      "title": "Help Desk ticket lifecycle and routing",
+      "spec": "Implement the complete ticket lifecycle: intake, categorization, assignment, acceptance, status transitions, comments, and workload-aware routing. Include SQL constraints, indexes, RLS, transactional RPC/Edge Functions where needed, and schema-contract entries.",
+      "status": "queued",
+      "attempts": 0,
+      "last_error": null,
+      "files_changed": []
+    },
+    {
+      "id": "SB-004",
+      "layer": "supabase",
+      "title": "Audit, governance, and verified completion",
+      "spec": "Implement append-only audit events and the governance/verification workflow used to approve completed work. Include actor, tenant, ticket, evidence, decision, timestamps, RLS, indexes, and secure server-side verification functions. Rewards must not be issued before verified completion.",
+      "status": "queued",
+      "attempts": 0,
+      "last_error": null,
+      "files_changed": []
+    },
+    {
+      "id": "SB-005",
+      "layer": "supabase",
+      "title": "Stars, badges, rewards, and notification ledger",
+      "spec": "Implement idempotent star transactions, badge criteria/awards, configurable reward values, early-acceptance bonuses, and notification records. Prevent duplicate awards with unique constraints and award completion stars only after governance verification. Document all contracts.",
+      "status": "queued",
+      "attempts": 0,
+      "last_error": null,
+      "files_changed": []
+    },
+    {
+      "id": "FE-001",
+      "layer": "frontend",
+      "title": "Global Command Center application shell and navigation",
+      "spec": "Build the responsive authenticated Command Center shell, global navigation, route structure, loading/error/empty states, and tenant-aware navigation guards. Wire every action to a documented route or schema-contract endpoint; do not add decorative dead controls.",
+      "status": "queued",
+      "attempts": 0,
+      "last_error": []
+    },
+    {
+      "id": "FE-002",
+      "layer": "frontend",
+      "title": "Help Desk queue and ticket intake module",
+      "spec": "Build the Help Desk queue and intake experience with filters, search, ticket creation, ticket details, status changes, and live Supabase reads/mutations using only documented schema-contract entries. Include loading, error, and empty states.",
+      "status": "queued",
+      "attempts": 0,
+      "last_error": null,
+      "files_changed": []
+    },
+    {
+      "id": "FE-003",
+      "layer": "frontend",
+      "title": "Bring the Work to You and workload-aware assignment",
+      "spec": "Build the Bring the Work to You experience with incoming assignment notifications, accept/decline actions, workload visibility, and least-outstanding-work routing feedback. Wire every button to real documented endpoints and handle duplicate/expired assignments.",
+      "status": "queued",
+      "attempts": 0,
+      "last_error": null,
+      "files_changed": []
+    },
+    {
+      "id": "FE-004",
+      "layer": "frontend",
+      "title": "Audit and Governance verification workspace",
+      "spec": "Build an audit/governance workspace for reviewing ticket evidence, verification decisions, audit history, and rejected work. Use live documented Supabase queries and mutations with role-aware controls.",
+      "status": "queued",
+      "attempts": 0,
+      "last_error": null,
+      "files_changed": []
+    },
+    {
+      "id": "FE-005",
+      "layer": "frontend",
+      "title": "Employee stars, badges, and progress center",
+      "spec": "Build the employee rewards experience showing star ledger, badge progress, verified completions, and reward history. Read authoritative server-side ledger data; never calculate or grant authoritative rewards in the browser.",
+      "status": "queued",
+      "attempts": 0,
+      "last_error": null,
+      "files_changed": []
+    },
+    {
+      "id": "FE-006",
+      "layer": "frontend",
+      "title": "Administration, policy, and configuration center",
+      "spec": "Build administrative screens for tenant/role-aware configuration of routing, reward values, acceptance windows, and governance policies. Validate inputs and persist through documented secured endpoints.",
+      "status": "queued",
+      "attempts": 0,
+      "last_error": null,
+      "files_changed": []
+    },
+    {
+      "id": "IM-001",
+      "layer": "images",
+      "title": "Command Center brand and dashboard visual assets",
+      "spec": "Generate and integrate the unique brand/background/dashboard visuals referenced by data-prompt tags. Store generated files under public/images/, update source paths, and verify every local image path resolves.",
+      "status": "queued",
+      "attempts": 0,
+      "last_error": null,
+      "files_changed": []
+    },
+    {
+      "id": "IM-002",
+      "layer": "images",
+      "title": "Help Buddy character and expression assets",
+      "spec": "Generate the Help Buddy character base and the required distinct expression/interaction visual assets from repository data-prompt descriptions. Store uniquely named files in public/images/ and update all references.",
+      "status": "queued",
+      "attempts": 0,
+      "last_error": null,
+      "files_changed": []
+    },
+    {
+      "id": "IM-003",
+      "layer": "images",
+      "title": "Rewards, badges, and module icon assets",
+      "spec": "Generate the unique badge/reward and module visual assets referenced by data-prompt tags. Ensure filenames are unique, references are updated, and all files are present under public/images/.",
+      "status": "queued",
+      "attempts": 0,
+      "last_error": null,
+      "files_changed": []
+    }
+  ],
+  "retry_queue": [],
+  "verified_counts": {
+    "supabase": 0,
+    "frontend": 0,
+    "images": 0
+  },
+  "overall_status": "running"
+}
