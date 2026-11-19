@@ -20,8 +20,7 @@ async function walk(dir) {
 }
 
 function attr(tag, name) {
-  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const match = tag.match(new RegExp("\\b" + escaped + "\\s*=\\s*([\\"'])([\\s\\S]*?)\\1", "i"));
+  const match = tag.match(new RegExp("\\b" + name + "\\s*=\\s*([\"'])([\\s\\S]*?)\\1", "i"));
   return match?.[2] ?? null;
 }
 
@@ -47,46 +46,52 @@ async function main() {
   for (const file of sourceFiles) {
     let source = await fs.readFile(file, "utf8");
     let changed = false;
-    const tags = [...source.matchAll(/<img\\b[^>]*>/gi)];
+    const tags = [...source.matchAll(/<img\b[^>]*>/gi)];
     for (const match of tags) {
       const tag = match[0];
       const prompt = attr(tag, "data-prompt");
       if (!prompt?.trim()) continue;
       const currentSrc = attr(tag, "src") ?? "";
-      const localPath = currentSrc.startsWith("/") ? path.join(ROOT, "public", currentSrc.slice(1)) : path.resolve(path.dirname(file), currentSrc);
+      const localPath = currentSrc.startsWith("/")
+        ? path.join(ROOT, "public", currentSrc.slice(1))
+        : path.resolve(path.dirname(file), currentSrc);
       let existing = false;
-      if (currentSrc && !currentSrc.includes("placeholder")) {
+      if (currentSrc && !currentSrc.includes("placeholder") && !/^https?:\/\//i.test(currentSrc)) {
         try { existing = (await fs.stat(localPath)).isFile(); } catch {}
       }
       if (existing) continue;
+
       pending++;
       const digest = createHash("sha256").update(prompt.trim()).digest("hex").slice(0, 10);
-      const base = slug(prompt);
-      const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt.trim())}?width=1200&height=800&nologo=true`;
+      const filenameBase = slug(prompt);
+      const url = "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt.trim()) + "?width=1200&height=800&nologo=true";
       try {
-        const response = await fetch(url, { headers: { "Accept": "image/*" }, signal: AbortSignal.timeout(90000) });
-        if (!response.ok) throw new Error(`image service returned HTTP ${response.status}`);
+        const response = await fetch(url, {
+          headers: { Accept: "image/*" },
+          signal: AbortSignal.timeout(90000),
+        });
+        if (!response.ok) throw new Error("image service returned HTTP " + response.status);
         const contentType = (response.headers.get("content-type") ?? "").toLowerCase();
         const extension = extensionFor(contentType);
-        if (!extension) throw new Error(`unexpected content type: ${contentType || "missing"}`);
+        if (!extension) throw new Error("unexpected content type: " + (contentType || "missing"));
         const bytes = Buffer.from(await response.arrayBuffer());
-        if (bytes.length < 1024) throw new Error(`image response too small (${bytes.length} bytes)`);
-        const filename = `${base}-${digest}.${extension}`;
+        if (bytes.length < 1024) throw new Error("image response too small (" + bytes.length + " bytes)");
+        const filename = filenameBase + "-" + digest + "." + extension;
         await fs.writeFile(path.join(IMAGE_DIR, filename), bytes);
-        const replacement = tag.replace(/\\bsrc\\s*=\\s*(["']).*?\\1/i, `src="/images/${filename}"`);
+        const replacement = tag.replace(/\bsrc\s*=\s*(["']).*?\1/i, 'src="/images/' + filename + '"');
         source = source.replace(tag, replacement);
         changed = true;
         processed++;
-        console.log(`Generated /images/${filename} (${bytes.length} bytes) for ${path.relative(ROOT, file)}`);
+        console.log("Generated /images/" + filename + " (" + bytes.length + " bytes) for " + path.relative(ROOT, file));
       } catch (error) {
         failures.push({ file: path.relative(ROOT, file), prompt: prompt.trim(), error: String(error) });
-        console.error(`Failed prompt in ${path.relative(ROOT, file)}: ${String(error)}`);
+        console.error("Failed prompt in " + path.relative(ROOT, file) + ": " + String(error));
       }
     }
     if (changed) await fs.writeFile(file, source);
   }
 
-  console.log(`Image prompt scan complete: ${processed} generated, ${pending - processed - failures.length} already resolved or skipped, ${failures.length} failed.`);
+  console.log("Image prompt scan complete: " + processed + " generated, " + failures.length + " failed.");
   if (failures.length) {
     console.error(JSON.stringify(failures, null, 2));
     process.exitCode = 1;
