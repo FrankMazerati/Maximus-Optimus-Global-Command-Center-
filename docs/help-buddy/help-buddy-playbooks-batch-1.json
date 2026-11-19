@@ -1,0 +1,2526 @@
+{
+  "catalogVersion": "1.0.0",
+  "status": "draft_for_admin_review",
+  "createdFor": "Help Buddy Playbooks",
+  "notes": [
+    "Templates are reusable ticket checklists, not executable automations.",
+    "Historical tickets are not modified by these templates.",
+    "Default priority is a starting point only; impact, urgency, scope, service criticality, and tenant policy determine actual ticket priority.",
+    "Any approval-required playbook must capture approver identity, decision, timestamp, scope, and expiry where applicable.",
+    "Each ticket must retain an immutable snapshot of the published playbook version used at ticket creation.",
+    "Master templates are protected; company and department customizations are child versions and cannot overwrite the master."
+  ],
+  "playbooks": [
+    {
+      "id": "HB-001",
+      "name": "Password reset",
+      "category": "Identity & Access",
+      "trigger": "Password forgotten, expired, or user-initiated reset",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "Identity & Access / Service Desk",
+      "escalationPath": "Security if compromise indicators appear",
+      "approvalRequired": false,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-001-S01",
+          "order": 1,
+          "label": "Confirm requester identity using the organization's approved verification method; never rely only on information supplied in the ticket.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-001-S02",
+          "order": 2,
+          "label": "Confirm the affected account, tenant, application, and whether the user can access an alternate verified channel.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-001-S03",
+          "order": 3,
+          "label": "Classify the reason: forgotten, expired, administratively reset, or suspected compromise.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-001-S04",
+          "order": 4,
+          "label": "If compromise, impossible travel, unexpected MFA prompts, or unauthorized activity is reported, stop routine reset and invoke the security-compromise playbook.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-001-S05",
+          "order": 5,
+          "label": "Check account status and applicable password/MFA policy; confirm the requester is authorized for the account.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-001-S06",
+          "order": 6,
+          "label": "Perform the reset only through the approved identity platform; do not ask the user to send or disclose a password.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-001-S07",
+          "order": 7,
+          "label": "Require the approved MFA or secure recovery step and revoke sessions/tokens when policy or compromise indicators require it.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-001-S08",
+          "order": 8,
+          "label": "Have the requester verify sign-in and access to the affected service.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-001-S09",
+          "order": 9,
+          "label": "Record actions, systems touched, verification result, and user confirmation; close only after successful validation.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-002",
+      "name": "Account locked or sign-in blocked",
+      "category": "Identity & Access",
+      "trigger": "Repeated failed sign-ins, lockout, disabled account, or access blocked",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "Identity & Access / Service Desk",
+      "escalationPath": "Security for suspicious authentication patterns",
+      "approvalRequired": false,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-002-S01",
+          "order": 1,
+          "label": "Verify requester identity and the exact account/tenant.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-002-S02",
+          "order": 2,
+          "label": "Capture the error text, time, application, device, network, and whether other users are affected.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-002-S03",
+          "order": 3,
+          "label": "Check account state, lockout counters, conditional-access decisions, and identity-provider health.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-002-S04",
+          "order": 4,
+          "label": "Determine whether the lockout is user error, stale credentials, policy enforcement, sync issue, or suspicious activity.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-002-S05",
+          "order": 5,
+          "label": "If repeated attempts originate from unknown locations/devices or the user denies the activity, preserve evidence and escalate to Security before unlocking.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-002-S06",
+          "order": 6,
+          "label": "Unlock or correct the cause using the approved identity administration process.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-002-S07",
+          "order": 7,
+          "label": "Confirm the user can authenticate and that required MFA/conditional-access controls remain active.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-002-S08",
+          "order": 8,
+          "label": "Document root cause, action, and any preventive guidance; resolve only after validation.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-003",
+      "name": "New user account creation",
+      "category": "Identity & Access",
+      "trigger": "Create a workforce identity for a new employee or approved worker",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "Identity & Access with HR / hiring manager",
+      "escalationPath": "Identity Governance for privileged or unusual access",
+      "approvalRequired": true,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-003-S01",
+          "order": 1,
+          "label": "Confirm the approved onboarding request and authoritative worker record, start date, manager, department, location, worker type, and end date if temporary.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-003-S02",
+          "order": 2,
+          "label": "Verify the manager and resource owners have approved requested access; reject vague blanket-access requests.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-003-S03",
+          "order": 3,
+          "label": "Check for an existing identity to prevent duplicate accounts.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-003-S04",
+          "order": 4,
+          "label": "Assign the correct tenant, company, user identifier, baseline role, groups, and license profile.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-003-S05",
+          "order": 5,
+          "label": "Create the identity using approved provisioning tools and enforce MFA enrollment.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-003-S06",
+          "order": 6,
+          "label": "Provision only role-based baseline access; route elevated, financial, production, or sensitive access for separate approval.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-003-S07",
+          "order": 7,
+          "label": "Verify directory synchronization and sign-in readiness.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-003-S08",
+          "order": 8,
+          "label": "Notify the manager/requester through an approved channel with first-login instructions.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-003-S09",
+          "order": 9,
+          "label": "Record approvals, assigned groups/licenses, effective date, and provisioning evidence.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-004",
+      "name": "Access request or permission change",
+      "category": "Identity & Access",
+      "trigger": "Add, change, or remove access to an application, data set, group, or resource",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "Resource-owning department / Identity Access",
+      "escalationPath": "Governance for sensitive access; Security for suspicious requests",
+      "approvalRequired": true,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-004-S01",
+          "order": 1,
+          "label": "Identify requester, beneficiary, resource, tenant, exact permission level, business purpose, and requested duration.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-004-S02",
+          "order": 2,
+          "label": "Verify identity and confirm the requester is authorized to request access for the beneficiary.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-004-S03",
+          "order": 3,
+          "label": "Check existing access and whether a standard role already satisfies the need.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-004-S04",
+          "order": 4,
+          "label": "Obtain manager approval and resource-owner approval; add data owner, system owner, or compliance approval where policy requires.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-004-S05",
+          "order": 5,
+          "label": "Check separation-of-duties conflicts, privileged access rules, licensing, and tenant boundary.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-004-S06",
+          "order": 6,
+          "label": "Grant the minimum necessary permission with an expiry date where appropriate.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-004-S07",
+          "order": 7,
+          "label": "Verify access works and does not expose unrelated records or tenants.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-004-S08",
+          "order": 8,
+          "label": "Record approvers, role/group, scope, start/expiry, and audit evidence.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-004-S09",
+          "order": 9,
+          "label": "Schedule recertification or expiry review; remove access when no longer required.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-005",
+      "name": "MFA setup, recovery, or replacement",
+      "category": "Identity & Access",
+      "trigger": "Enroll, replace, or recover a multi-factor authentication method",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "Identity & Access / Service Desk",
+      "escalationPath": "Security for lost device, takeover indicators, or repeated bypass requests",
+      "approvalRequired": false,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-005-S01",
+          "order": 1,
+          "label": "Verify identity using the approved high-assurance recovery method; do not use the factor being replaced as the only proof.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-005-S02",
+          "order": 2,
+          "label": "Confirm whether this is first enrollment, lost device, new phone, failed authenticator, or suspected MFA fatigue.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-005-S03",
+          "order": 3,
+          "label": "Check sign-in logs and recent MFA changes for suspicious activity.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-005-S04",
+          "order": 4,
+          "label": "If takeover or push-bombing is suspected, secure the account and escalate to Security before recovery.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-005-S05",
+          "order": 5,
+          "label": "Revoke the lost/compromised factor and any sessions as required by policy.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-005-S06",
+          "order": 6,
+          "label": "Enroll the replacement factor using the approved identity provider process.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-005-S07",
+          "order": 7,
+          "label": "Verify the new factor with a fresh authentication challenge.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-005-S08",
+          "order": 8,
+          "label": "Confirm backup/recovery methods meet policy and remove obsolete factors.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-005-S09",
+          "order": 9,
+          "label": "Document verification method, factor lifecycle action, and user confirmation without storing secrets.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-006",
+      "name": "Laptop or desktop malfunction",
+      "category": "Endpoint & Device",
+      "trigger": "Workstation fails, crashes, runs slowly, or has hardware/software symptoms",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "Endpoint Support / Help Desk",
+      "escalationPath": "Endpoint Engineering for widespread or recurring faults",
+      "approvalRequired": false,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-006-S01",
+          "order": 1,
+          "label": "Confirm user, asset tag/device ID, location, business impact, and whether the device is managed.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-006-S02",
+          "order": 2,
+          "label": "Capture symptoms, exact error, start time, recent changes, power/network state, and reproducibility.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-006-S03",
+          "order": 3,
+          "label": "Determine whether the issue affects one device, a department, or a wider service.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-006-S04",
+          "order": 4,
+          "label": "Check endpoint health, disk/memory/CPU, patch state, security alerts, and known incidents.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-006-S05",
+          "order": 5,
+          "label": "Back up or protect user data before repair, reset, or replacement.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-006-S06",
+          "order": 6,
+          "label": "Apply approved troubleshooting: restart, diagnostics, driver/patch repair, or known-good configuration.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-006-S07",
+          "order": 7,
+          "label": "If hardware failure, data loss, encryption issue, or malware indicator appears, route to the relevant specialist and preserve evidence.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-006-S08",
+          "order": 8,
+          "label": "Validate core business applications and user workflow after repair.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-006-S09",
+          "order": 9,
+          "label": "Record diagnosis, parts/software changes, data-protection actions, and resolution.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-007",
+      "name": "New computer or equipment request",
+      "category": "Endpoint & Device",
+      "trigger": "Request a new laptop, desktop, monitor, or standard workstation kit",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "Endpoint Asset Management / Procurement",
+      "escalationPath": "Manager and budget owner for non-standard or high-cost equipment",
+      "approvalRequired": true,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-007-S01",
+          "order": 1,
+          "label": "Confirm requester, role, location, start date, business need, and whether this is new hire, replacement, or additional equipment.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-007-S02",
+          "order": 2,
+          "label": "Check assigned inventory, standard device catalog, warranty status, and available stock.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-007-S03",
+          "order": 3,
+          "label": "Confirm manager approval and budget/cost-center approval where required.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-007-S04",
+          "order": 4,
+          "label": "Select an approved standard configuration; route exceptions for technical/security review.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-007-S05",
+          "order": 5,
+          "label": "Create procurement or asset-reservation record and confirm delivery/collection logistics.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-007-S06",
+          "order": 6,
+          "label": "Enroll device in endpoint management, encryption, patching, EDR, and configuration baseline before handoff.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-007-S07",
+          "order": 7,
+          "label": "Assign asset tag and link the device to the correct workforce profile.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-007-S08",
+          "order": 8,
+          "label": "Have the user acknowledge receipt and complete first-login/MFA validation.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-007-S09",
+          "order": 9,
+          "label": "Record asset, warranty, cost, approvals, and custody.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-008",
+      "name": "Monitor, keyboard, mouse, or peripheral issue",
+      "category": "Endpoint & Device",
+      "trigger": "A workstation peripheral is missing, damaged, or not functioning",
+      "defaultPriority": "Low",
+      "defaultAssignment": "Endpoint Support / Local IT",
+      "escalationPath": "Procurement for replacement outside standard allowance",
+      "approvalRequired": false,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-008-S01",
+          "order": 1,
+          "label": "Confirm user, workstation, peripheral type, asset/serial if available, and business impact.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-008-S02",
+          "order": 2,
+          "label": "Check cable, port, power, batteries, Bluetooth pairing, docking station, and compatibility.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-008-S03",
+          "order": 3,
+          "label": "Test the peripheral on a known-good port/device where practical.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-008-S04",
+          "order": 4,
+          "label": "Check approved drivers, device policies, and endpoint logs.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-008-S05",
+          "order": 5,
+          "label": "Determine repair versus replacement under warranty and standard inventory policy.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-008-S06",
+          "order": 6,
+          "label": "Obtain approval if replacement exceeds the standard allowance.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-008-S07",
+          "order": 7,
+          "label": "Replace or reconfigure using approved equipment.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-008-S08",
+          "order": 8,
+          "label": "Confirm normal operation with the requester.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-008-S09",
+          "order": 9,
+          "label": "Update inventory/custody records and document disposal if applicable.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-009",
+      "name": "Device enrollment and configuration",
+      "category": "Endpoint & Device",
+      "trigger": "Enroll a new or existing endpoint into management and baseline controls",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "Endpoint Engineering / Device Management",
+      "escalationPath": "Security if enrollment posture or ownership is uncertain",
+      "approvalRequired": false,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-009-S01",
+          "order": 1,
+          "label": "Verify device ownership, asset record, user assignment, and tenant.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-009-S02",
+          "order": 2,
+          "label": "Confirm platform/OS version, device model, serial, and eligibility for management.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-009-S03",
+          "order": 3,
+          "label": "Check for existing enrollment, duplicate device objects, or conflicting management profiles.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-009-S04",
+          "order": 4,
+          "label": "Validate prerequisites: supported OS, network access, identity, certificates, and licensing.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-009-S05",
+          "order": 5,
+          "label": "Enroll through the approved MDM/endpoint platform.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-009-S06",
+          "order": 6,
+          "label": "Apply baseline configuration: encryption, EDR, firewall, patching, screen lock, and compliance policies.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-009-S07",
+          "order": 7,
+          "label": "Confirm device reports healthy/compliant and required apps are deployed.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-009-S08",
+          "order": 8,
+          "label": "Test user sign-in and access to approved corporate resources.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-009-S09",
+          "order": 9,
+          "label": "Record enrollment ID, compliance state, policy profile, and any exceptions.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-010",
+      "name": "Lost or stolen device",
+      "category": "Endpoint & Device",
+      "trigger": "Corporate or BYOD device is lost, stolen, or believed compromised",
+      "defaultPriority": "High",
+      "defaultAssignment": "Endpoint Security / IT Asset Management",
+      "escalationPath": "Security incident response immediately; law enforcement per policy",
+      "approvalRequired": true,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-010-S01",
+          "order": 1,
+          "label": "Capture reporter, device type/asset ID, last known location/time, and whether theft is suspected.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-010-S02",
+          "order": 2,
+          "label": "Verify the reporter and classify corporate-owned versus BYOD and data sensitivity.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-010-S03",
+          "order": 3,
+          "label": "Immediately notify Security and the device-management owner; do not delay containment for routine approvals.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-010-S04",
+          "order": 4,
+          "label": "Revoke sessions/tokens and block sign-in as directed by incident response policy.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-010-S05",
+          "order": 5,
+          "label": "Locate, lock, or remotely wipe the device only under approved authority and data-preservation rules.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-010-S06",
+          "order": 6,
+          "label": "Assess exposure of data, credentials, regulated information, and connected accounts.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-010-S07",
+          "order": 7,
+          "label": "Preserve relevant logs and incident evidence; coordinate legal/privacy notifications where required.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-010-S08",
+          "order": 8,
+          "label": "Arrange replacement equipment and restore access after identity assurance.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-010-S09",
+          "order": 9,
+          "label": "Document timeline, containment, approvals, wipe status, notifications, and incident linkage.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-011",
+      "name": "Software installation request",
+      "category": "Software & Productivity",
+      "trigger": "Install or license an application on a managed endpoint",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "Software Asset Management / Endpoint Support",
+      "escalationPath": "Security, Procurement, or data owner for non-approved/high-risk software",
+      "approvalRequired": true,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-011-S01",
+          "order": 1,
+          "label": "Identify application, publisher, version, device, user, business purpose, and required date.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-011-S02",
+          "order": 2,
+          "label": "Check approved software catalog, existing entitlement, and license availability.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-011-S03",
+          "order": 3,
+          "label": "Review security posture, publisher authenticity, data handling, integrations, and compatibility.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-011-S04",
+          "order": 4,
+          "label": "Obtain manager, budget, software owner, and security approvals as policy requires.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-011-S05",
+          "order": 5,
+          "label": "Confirm license terms, seat assignment, renewal, and cost center.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-011-S06",
+          "order": 6,
+          "label": "Deploy using the approved software distribution method; do not install unverified binaries.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-011-S07",
+          "order": 7,
+          "label": "Validate application launch, required configuration, and access permissions.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-011-S08",
+          "order": 8,
+          "label": "Update software inventory and license records.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-011-S09",
+          "order": 9,
+          "label": "Document version, entitlement, approvals, deployment, and renewal owner.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-012",
+      "name": "Application error or software not working",
+      "category": "Software & Productivity",
+      "trigger": "An application crashes, produces errors, or behaves unexpectedly",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "Application Support / Help Desk",
+      "escalationPath": "Application owner or vendor support for systemic defects",
+      "approvalRequired": false,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-012-S01",
+          "order": 1,
+          "label": "Capture application name/version, user, device, tenant, exact error, timestamp, and business impact.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-012-S02",
+          "order": 2,
+          "label": "Determine scope: one user, one device, one department, or multiple tenants.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-012-S03",
+          "order": 3,
+          "label": "Check service health, known incidents, recent deployments, and dependency status.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-012-S04",
+          "order": 4,
+          "label": "Reproduce safely and gather logs/screenshots with secrets and personal data redacted.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-012-S05",
+          "order": 5,
+          "label": "Check permissions, licensing, network, compatibility, and recent configuration changes.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-012-S06",
+          "order": 6,
+          "label": "Apply approved workaround or repair; avoid unapproved data deletion or reinstall.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-012-S07",
+          "order": 7,
+          "label": "Escalate reproducible defects with evidence, affected versions, and business impact.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-012-S08",
+          "order": 8,
+          "label": "Confirm the user can complete the original task and that data is intact.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {          "id": "HB-012-S09",
+          "order": 9,
+          "label": "Record cause, workaround/fix, version, and knowledge article candidate.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-013",
+      "name": "Microsoft 365 application issue",
+      "category": "Software & Productivity",
+      "trigger": "Word, Excel, PowerPoint, Teams, OneDrive, or related service problem",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "M365 Support / Collaboration Services",
+      "escalationPath": "Microsoft service owner for tenant-wide outage or data exposure",
+      "approvalRequired": false,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-013-S01",
+          "order": 1,
+          "label": "Identify affected M365 application, account, device, tenant, and user workflow.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-013-S02",
+          "order": 2,
+          "label": "Check Microsoft 365 service health and internal incident notices.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-013-S03",
+          "order": 3,
+          "label": "Determine client, web, mobile, or service-side scope and whether multiple users are affected.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-013-S04",
+          "order": 4,
+          "label": "Check license, sign-in, conditional access, app version, update state, and connectivity.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-013-S05",
+          "order": 5,
+          "label": "Capture error/correlation details and relevant diagnostics without collecting document contents unnecessarily.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-013-S06",
+          "order": 6,
+          "label": "Apply approved client repair, cache remediation, profile correction, or service workaround.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-013-S07",
+          "order": 7,
+          "label": "For Teams/SharePoint/OneDrive sharing issues, verify sharing scope and data-owner authorization before changing access.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-013-S08",
+          "order": 8,
+          "label": "Validate the affected workflow and data synchronization with the user.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-013-S09",
+          "order": 9,
+          "label": "Document service-health finding, remediation, and any tenant-wide incident linkage.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-014",
+      "name": "Email sending or receiving problem",
+      "category": "Email & Collaboration",
+      "trigger": "Messages fail, are delayed, bounce, or do not arrive",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "Messaging / Email Support",
+      "escalationPath": "Security for phishing, spoofing, compromise, or sensitive data leak",
+      "approvalRequired": false,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-014-S01",
+          "order": 1,
+          "label": "Capture sender/recipient domains, approximate time, subject reference, error/NDR, and business impact; do not request message passwords or unnecessary content.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-014-S02",
+          "order": 2,
+          "label": "Determine inbound, outbound, internal, external, single-recipient, or tenant-wide scope.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-014-S03",
+          "order": 3,
+          "label": "Check mail service health, message trace, queues, quarantine, transport rules, and mailbox quota.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-014-S04",
+          "order": 4,
+          "label": "Inspect bounce codes, routing, DNS/authentication records, and spam filtering as appropriate.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-014-S05",
+          "order": 5,
+          "label": "Check whether policy, DLP, attachment limits, or recipient restrictions blocked delivery.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-014-S06",
+          "order": 6,
+          "label": "If suspicious forwarding, spoofing, account compromise, or data exfiltration is suspected, escalate to Security.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-014-S07",
+          "order": 7,
+          "label": "Apply the approved fix or provide a safe workaround; do not disable protections broadly.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-014-S08",
+          "order": 8,
+          "label": "Send a controlled test message and confirm delivery with the requester.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-014-S09",
+          "order": 9,
+          "label": "Record trace result, cause, remediation, and any security/incident reference.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-015",
+      "name": "Email account setup or mailbox configuration",
+      "category": "Email & Collaboration",
+      "trigger": "Configure mailbox, shared mailbox, mobile mail, aliases, or mail client",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "Messaging / Email Support",
+      "escalationPath": "Mailbox owner and manager for shared/delegated access",
+      "approvalRequired": true,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-015-S01",
+          "order": 1,
+          "label": "Identify mailbox type, owner, tenant, devices/clients, and requested configuration.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-015-S02",
+          "order": 2,
+          "label": "Verify the requester and confirm authorization from the mailbox owner for delegation or shared access.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-015-S03",
+          "order": 3,
+          "label": "Check license, mailbox existence, address/alias availability, retention, and applicable policy.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-015-S04",
+          "order": 4,
+          "label": "Obtain manager/owner approval for send-as, send-on-behalf, delegation, or shared mailbox membership.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-015-S05",
+          "order": 5,
+          "label": "Apply least-privilege permissions and time-bound access where appropriate.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-015-S06",
+          "order": 6,
+          "label": "Configure the approved client or mailbox settings using supported methods.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-015-S07",
+          "order": 7,
+          "label": "Verify send/receive, calendar access, and delegated behavior within the approved scope.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-015-S08",
+          "order": 8,
+          "label": "Confirm no unintended external forwarding or excessive permissions were introduced.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-015-S09",
+          "order": 9,
+          "label": "Record mailbox settings, approvals, owner, and review/expiry date.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-016",
+      "name": "Wi-Fi or network connectivity",
+      "category": "Network & Connectivity",
+      "trigger": "User/device cannot connect or has intermittent local network access",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "Network Operations / Help Desk",
+      "escalationPath": "NOC for site-wide impact; Security for rogue network indicators",
+      "approvalRequired": false,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-016-S01",
+          "order": 1,
+          "label": "Identify user, device, site/location, network/SSID, time, and affected applications.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-016-S02",
+          "order": 2,
+          "label": "Determine whether issue is wired, Wi-Fi, VPN, DNS, DHCP, or application-specific.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-016-S03",
+          "order": 3,
+          "label": "Check scope across nearby users/devices and consult network monitoring.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-016-S04",
+          "order": 4,
+          "label": "Verify signal, adapter state, IP configuration, gateway, DNS, authentication, and captive portal status.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-016-S05",
+          "order": 5,
+          "label": "Check recent changes, access-point/switch health, DHCP pool, and known outages.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-016-S06",
+          "order": 6,
+          "label": "Apply approved endpoint/network remediation; do not bypass NAC or security controls.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-016-S07",
+          "order": 7,
+          "label": "Escalate to NOC with site, VLAN/SSID, timestamps, test results, and impact if infrastructure is implicated.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-016-S08",
+          "order": 8,
+          "label": "Validate access to required internal and external services.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-016-S09",
+          "order": 9,
+          "label": "Record root cause, affected area, and any network incident/problem reference.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-017",
+      "name": "VPN or remote-access issue",
+      "category": "Network & Connectivity",
+      "trigger": "User cannot establish secure remote access or loses VPN connectivity",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "Network Operations / Remote Access Support",
+      "escalationPath": "Security for unusual locations, device posture failures, or suspected credential abuse",
+      "approvalRequired": false,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-017-S01",
+          "order": 1,
+          "label": "Verify user identity and approved remote-access entitlement.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-017-S02",
+          "order": 2,
+          "label": "Capture client/version, device posture, location, network type, error, and timestamp.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-017-S03",
+          "order": 3,
+          "label": "Check VPN gateway/service health, authentication provider, certificates, and current incidents.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-017-S04",
+          "order": 4,
+          "label": "Determine whether failure is credential/MFA, certificate, client, DNS, routing, or device-compliance related.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-017-S05",
+          "order": 5,
+          "label": "Review sign-in and VPN logs for suspicious patterns before changing access controls.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-017-S06",
+          "order": 6,
+          "label": "Apply approved client repair, certificate renewal, or policy correction.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-017-S07",
+          "order": 7,
+          "label": "Do not disable MFA, posture checks, or split-tunnel protections as a shortcut.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-017-S08",
+          "order": 8,
+          "label": "Test secure connection and required resource access with the user.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-017-S09",
+          "order": 9,
+          "label": "Document gateway, error, root cause, and any policy exception with expiry.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-018",
+      "name": "Network outage or service interruption",
+      "category": "Network & Connectivity",
+      "trigger": "Multiple users or business services lose connectivity or degrade significantly",
+      "defaultPriority": "High",
+      "defaultAssignment": "NOC / Network Operations",
+      "escalationPath": "Major Incident Manager; Security if attack or compromise suspected",
+      "approvalRequired": true,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-018-S01",
+          "order": 1,
+          "label": "Establish incident commander/owner and capture start time, affected sites, services, users, and business impact.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-018-S02",
+          "order": 2,
+          "label": "Check monitoring alerts, network topology, provider status, recent changes, and correlated incidents.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-018-S03",
+          "order": 3,
+          "label": "Declare major incident when impact/urgency thresholds are met; notify stakeholders using approved channels.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-018-S04",
+          "order": 4,
+          "label": "Assign network, infrastructure, application, and provider responders as indicated by evidence.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-018-S05",
+          "order": 5,
+          "label": "Preserve logs and change records; avoid uncoordinated changes during incident response.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-018-S06",
+          "order": 6,
+          "label": "Apply approved containment or rollback with change/incident authority.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-018-S07",
+          "order": 7,
+          "label": "Provide status updates at the defined communication cadence and record decisions.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-018-S08",
+          "order": 8,
+          "label": "Validate service restoration from affected locations and monitor for recurrence.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-018-S09",
+          "order": 9,
+          "label": "Complete timeline, root-cause/problem record, customer impact, and post-incident review actions.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-019",
+      "name": "Suspicious email or phishing report",
+      "category": "Security & Compliance",
+      "trigger": "User reports suspicious message, link, attachment, or impersonation",
+      "defaultPriority": "High",
+      "defaultAssignment": "SOC / Security Operations",
+      "escalationPath": "Incident Response lead for confirmed compromise or widespread campaign",
+      "approvalRequired": false,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-019-S01",
+          "order": 1,
+          "label": "Ask the reporter not to click, reply, forward externally, or delete the message until evidence instructions are given.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-019-S02",
+          "order": 2,
+          "label": "Capture message headers or submit through the approved phishing-report mechanism.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-019-S03",
+          "order": 3,
+          "label": "Determine recipients, clicks, attachment execution, credential entry, and reported time.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-019-S04",
+          "order": 4,
+          "label": "Analyze sender, authentication results, URLs, attachments, campaign indicators, and related reports in approved tools.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-019-S05",
+          "order": 5,
+          "label": "If credentials were entered or payload executed, invoke the relevant compromise/endpoint incident process immediately.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-019-S06",
+          "order": 6,
+          "label": "Contain by quarantining/removing matching messages and blocking indicators through approved controls.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-019-S07",
+          "order": 7,
+          "label": "Search for additional recipients and related activity across the tenant.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-019-S08",
+          "order": 8,
+          "label": "Notify affected users with approved guidance and validate no further exposure.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-019-S09",
+          "order": 9,
+          "label": "Record indicators, scope, containment, user impact, and lessons/awareness follow-up.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-020",
+      "name": "Suspected password or account compromise",
+      "category": "Security & Compliance",
+      "trigger": "User denies sign-in, credential theft, MFA fatigue, or unauthorized account activity",
+      "defaultPriority": "Critical",
+      "defaultAssignment": "SOC / Incident Response",
+      "escalationPath": "Security incident commander; Identity team for containment",
+      "approvalRequired": true,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-020-S01",
+          "order": 1,
+          "label": "Open/link a security incident and establish incident owner; preserve reported timeline.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-020-S02",
+          "order": 2,
+          "label": "Verify reporter through an independent trusted channel where possible.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-020-S03",
+          "order": 3,
+          "label": "Assess sign-in logs, MFA events, device/session activity, mailbox rules, privilege changes, and data access.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-020-S04",
+          "order": 4,
+          "label": "Contain according to incident policy: revoke sessions/tokens, disable or restrict account, reset credentials, and protect recovery factors.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-020-S05",
+          "order": 5,
+          "label": "Check lateral movement, connected applications, delegated access, forwarding rules, and other affected identities.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-020-S06",
+          "order": 6,
+          "label": "Preserve evidence and coordinate legal/privacy/compliance escalation when regulated data may be involved.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-020-S07",
+          "order": 7,
+          "label": "Restore identity only after compromise scope is understood and recovery controls are secured.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-020-S08",
+          "order": 8,
+          "label": "Validate MFA, device posture, mailbox/app settings, and user access after recovery.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-020-S09",
+          "order": 9,
+          "label": "Document timeline, evidence references, containment, impact, notifications, and follow-up controls.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-021",
+      "name": "Security incident or unauthorized access",
+      "category": "Security & Compliance",
+      "trigger": "Confirmed or suspected unauthorized access, data exposure, malware, or policy breach",
+      "defaultPriority": "Critical",
+      "defaultAssignment": "SOC / Incident Response",
+      "escalationPath": "CISO/security lead, Privacy/Legal, and business incident command as required",
+      "approvalRequired": true,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-021-S01",
+          "order": 1,
+          "label": "Create a security incident record, classify severity, assign incident commander, and preserve initial evidence.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-021-S02",
+          "order": 2,
+          "label": "Record detection source, time, affected systems, identities, data classes, tenants, and known business impact.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-021-S03",
+          "order": 3,
+          "label": "Activate incident response roles and communication channels; restrict sensitive incident details to authorized responders.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-021-S04",
+          "order": 4,
+          "label": "Contain affected identities, endpoints, services, or network segments using approved playbooks and change authority.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-021-S05",
+          "order": 5,
+          "label": "Preserve logs, forensic images, alerts, and chain-of-custody details; do not wipe or reimage before evidence decisions.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-021-S06",
+          "order": 6,
+          "label": "Determine scope, attack path, persistence, data access/exfiltration, and affected third parties.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-021-S07",
+          "order": 7,
+          "label": "Coordinate Legal, Privacy, Governance, and customer notification decisions under applicable policy and law.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-021-S08",
+          "order": 8,
+          "label": "Eradicate cause, restore from trusted state, rotate secrets, and monitor for recurrence.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-021-S09",
+          "order": 9,
+          "label": "Complete incident report, root cause, control improvements, and post-incident review.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-022",
+      "name": "Endpoint security alert investigation",
+      "category": "Security & Compliance",
+      "trigger": "EDR/endpoint alert, malware detection, policy violation, or suspicious endpoint behavior",
+      "defaultPriority": "High",
+      "defaultAssignment": "SOC with Endpoint Engineering",
+      "escalationPath": "Incident Response for confirmed malware, lateral movement, or data theft",
+      "approvalRequired": false,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-022-S01",
+          "order": 1,
+          "label": "Capture alert ID, endpoint, user, detection time, severity, rule, and telemetry source.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-022-S02",
+          "order": 2,
+          "label": "Confirm endpoint identity, ownership, criticality, and whether it is shared or business-critical.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-022-S03",
+          "order": 3,
+          "label": "Review alert evidence, process tree, hashes, network connections, persistence, and related alerts.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-022-S04",
+          "order": 4,
+          "label": "Determine false positive, policy violation, suspicious activity, or confirmed compromise using approved analysis.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-022-S05",
+          "order": 5,
+          "label": "If high-confidence malicious behavior is present, isolate the endpoint under incident authority and open/link a security incident.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-022-S06",
+          "order": 6,
+          "label": "Preserve relevant telemetry and avoid deleting artifacts before evidence collection.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-022-S07",
+          "order": 7,
+          "label": "Apply approved remediation: quarantine, remove persistence, patch, reimage, or restore as appropriate.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-022-S08",
+          "order": 8,
+          "label": "Validate endpoint health, EDR check-in, encryption, and compliance after remediation.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-022-S09",
+          "order": 9,
+          "label": "Document disposition, evidence, containment, and tuning/recurrence recommendations.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-023",
+      "name": "Employee onboarding",
+      "category": "HR & Staffing",
+      "trigger": "Coordinate pre-start and first-day tasks for a new employee",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "HR Operations as coordinator; IT/Facilities/Manager task owners",
+      "escalationPath": "HR manager for missing employment authorization; Security for sensitive access exceptions",
+      "approvalRequired": true,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-023-S01",
+          "order": 1,
+          "label": "Confirm authoritative HR record, approved hire, start date, worker type, location, department, manager, and employment status.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-023-S02",
+          "order": 2,
+          "label": "Confirm role, equipment, workspace, access profile, required training, and any accommodations through approved channels.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-023-S03",
+          "order": 3,
+          "label": "Create linked tasks for identity/account, device, software/licenses, facilities/badge, payroll/benefits, and manager orientation.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-023-S04",
+          "order": 4,
+          "label": "Obtain role/resource-owner approvals for access beyond baseline.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-023-S05",
+          "order": 5,
+          "label": "Ensure provisioning is scheduled for the authorized effective date and least-privilege baseline is used.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-023-S06",
+          "order": 6,
+          "label": "Verify device readiness, MFA, required applications, and physical access before or on start date.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-023-S07",
+          "order": 7,
+          "label": "Confirm employee can complete first-day workflows and manager receives completion status.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-023-S08",
+          "order": 8,
+          "label": "Track incomplete tasks, dependencies, and blockers to closure.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-023-S09",
+          "order": 9,
+          "label": "Record completion evidence while limiting HR-sensitive data to authorized roles.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-024",
+      "name": "Employee offboarding",
+      "category": "HR & Staffing",
+      "trigger": "Terminate or end a worker relationship and recover company assets/access",
+      "defaultPriority": "High",
+      "defaultAssignment": "HR Operations coordinator with Identity, IT Asset, Facilities",
+      "escalationPath": "Security/Legal for involuntary, high-risk, or incident-related separation",
+      "approvalRequired": true,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-024-S01",
+          "order": 1,
+          "label": "Verify authoritative HR separation record, effective date/time, worker identity, manager, and separation type.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-024-S02",
+          "order": 2,
+          "label": "Confirm legal hold, investigation, retention, and business continuity requirements before deleting or transferring data.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-024-S03",
+          "order": 3,
+          "label": "Coordinate exact timing with HR and Security; use approved timing controls for immediate or scheduled access removal.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-024-S04",
+          "order": 4,
+          "label": "Revoke identity sessions, credentials, tokens, VPN, privileged roles, and application access at the authorized time.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-024-S05",
+          "order": 5,
+          "label": "Transfer mailbox/files/business ownership only with documented owner and legal/privacy approval.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-024-S06",
+          "order": 6,
+          "label": "Recover devices, badges, keys, cards, and other assets; record custody and exceptions.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-024-S07",
+          "order": 7,
+          "label": "Disable or reclaim licenses and update directory, groups, and workforce records.",
+          "required": true,
+          "completionEvidence": true
+        },        {
+          "id": "HB-024-S08",
+          "order": 8,
+          "label": "Verify access is removed across connected systems and check for orphaned accounts or tokens.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-024-S09",
+          "order": 9,
+          "label": "Record evidence, exceptions, asset status, and final sign-off; do not erase records contrary to retention policy.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-025",
+      "name": "Employee role, department, or manager change",
+      "category": "HR & Staffing",
+      "trigger": "Internal transfer, title change, manager change, location change, or worker status update",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "HR Operations with Identity Governance",
+      "escalationPath": "Governance for conflicting privileges or sensitive role changes",
+      "approvalRequired": true,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-025-S01",
+          "order": 1,
+          "label": "Verify the authoritative HR change, effective date, new role/department/location, and approving manager.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-025-S02",
+          "order": 2,
+          "label": "Identify access and asset changes required by the new role.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-025-S03",
+          "order": 3,
+          "label": "Review existing entitlements against the new role; identify access to remove as well as access to add.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-025-S04",
+          "order": 4,
+          "label": "Obtain new manager and resource-owner approvals for changed access.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-025-S05",
+          "order": 5,
+          "label": "Check separation-of-duties conflicts and privileged access requirements.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-025-S06",
+          "order": 6,
+          "label": "Schedule access changes for the effective date; remove obsolete access promptly.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-025-S07",
+          "order": 7,
+          "label": "Update directory attributes, groups, distribution lists, and relevant workflows.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-025-S08",
+          "order": 8,
+          "label": "Validate the employee's new access and confirm old access is no longer available.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-025-S09",
+          "order": 9,
+          "label": "Record before/after entitlements, approvals, effective date, and review evidence.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-026",
+      "name": "Invoice, billing, or payment question",
+      "category": "Finance & Billing",
+      "trigger": "Question or discrepancy about an invoice, charge, credit, payment, or billing account",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "Finance Operations / Accounts Payable or Receivable",
+      "escalationPath": "Finance manager; Fraud/Compliance for suspected payment diversion",
+      "approvalRequired": true,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-026-S01",
+          "order": 1,
+          "label": "Verify requester identity and authority to view the account/invoice.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-026-S02",
+          "order": 2,
+          "label": "Capture invoice/reference number, vendor/customer, amount, currency, date, due date, and issue type.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-026-S03",
+          "order": 3,
+          "label": "Check source invoice, purchase order/contract, payment status, credits, tax, and prior correspondence.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-026-S04",
+          "order": 4,
+          "label": "Classify as inquiry, mismatch, duplicate, late payment, refund, disputed charge, or suspected fraud.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-026-S05",
+          "order": 5,
+          "label": "Route to the accountable finance owner; obtain budget/vendor owner input when required.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-026-S06",
+          "order": 6,
+          "label": "Do not change bank details or release payment based solely on email or ticket instructions; independently verify changes through trusted channels.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-026-S07",
+          "order": 7,
+          "label": "Obtain approval for adjustments, credits, refunds, or write-offs under finance policy.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-026-S08",
+          "order": 8,
+          "label": "Confirm corrected statement/payment status with the authorized requester.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-026-S09",
+          "order": 9,
+          "label": "Record decision, approvals, references, and any fraud/control incident linkage.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-027",
+      "name": "Purchase or spending approval",
+      "category": "Finance & Billing",
+      "trigger": "Request for purchase, expense, budget, or spending authorization",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "Requester’s Manager / Budget Owner / Procurement",
+      "escalationPath": "Finance controller for threshold, restricted, or exception spend",
+      "approvalRequired": true,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-027-S01",
+          "order": 1,
+          "label": "Capture item/service, business purpose, vendor, amount, currency, cost center, timing, and requester.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-027-S02",
+          "order": 2,
+          "label": "Check budget availability, procurement policy, approved vendor status, and purchasing thresholds.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-027-S03",
+          "order": 3,
+          "label": "Identify conflicts of interest, restricted suppliers, security/privacy review, and contract requirements.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-027-S04",
+          "order": 4,
+          "label": "Route sequential/parallel approvals according to delegation-of-authority rules; requester must not approve their own spend.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-027-S05",
+          "order": 5,
+          "label": "Obtain IT/security/privacy review for technology, SaaS, data processing, or integrations.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-027-S06",
+          "order": 6,
+          "label": "Create purchase order or approved purchasing record before commitment where required.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-027-S07",
+          "order": 7,
+          "label": "Confirm receipt/service acceptance and match invoice to approved purchase.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-027-S08",
+          "order": 8,
+          "label": "Record approvals, quote/contract, PO, budget, and any exception rationale.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-027-S09",
+          "order": 9,
+          "label": "Close only when approval outcome and next steps are communicated.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-028",
+      "name": "Knowledge article or procedure update",
+      "category": "Knowledge & Workflow",
+      "trigger": "Create, correct, review, or retire an internal help article or procedure",
+      "defaultPriority": "Low",
+      "defaultAssignment": "Knowledge Manager / Service Owner",
+      "escalationPath": "Security, Legal, HR, or process owner for controlled content",
+      "approvalRequired": true,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-028-S01",
+          "order": 1,
+          "label": "Identify article, audience, owner, problem, and whether this is create, update, correction, or retirement.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-028-S02",
+          "order": 2,
+          "label": "Check for duplicate or conflicting content and link related tickets/incidents.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-028-S03",
+          "order": 3,
+          "label": "Validate technical/process steps with the accountable service owner.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-028-S04",
+          "order": 4,
+          "label": "Remove secrets, personal data, credentials, internal-only details, and information beyond the target audience.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-028-S05",
+          "order": 5,
+          "label": "Add prerequisites, scope, step-by-step instructions, expected result, troubleshooting, and escalation path.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-028-S06",
+          "order": 6,
+          "label": "Obtain required peer, service-owner, and compliance approval.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-028-S07",
+          "order": 7,
+          "label": "Publish with version, owner, review date, audience, and change summary.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-028-S08",
+          "order": 8,
+          "label": "Notify impacted teams and link the article to relevant ticket categories/forms.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-028-S09",
+          "order": 9,
+          "label": "Schedule review and retire or supersede obsolete instructions with redirects.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-029",
+      "name": "Business process or workflow assistance",
+      "category": "Knowledge & Workflow",
+      "trigger": "User needs help completing an established internal process or service request",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "Owning Department / Service Desk triage",
+      "escalationPath": "Process owner or Governance for policy exception",
+      "approvalRequired": false,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-029-S01",
+          "order": 1,
+          "label": "Clarify the user's intended outcome, process name, department, deadline, and point where they are blocked.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-029-S02",
+          "order": 2,
+          "label": "Identify the authoritative process owner and current approved procedure.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-029-S03",
+          "order": 3,
+          "label": "Check whether the request is guidance, a missing prerequisite, system error, access issue, or policy exception.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-029-S04",
+          "order": 4,
+          "label": "Confirm requester eligibility and required approvals before advising or performing controlled steps.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-029-S05",
+          "order": 5,
+          "label": "Provide the approved knowledge article or guide the user through the relevant checklist.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-029-S06",
+          "order": 6,
+          "label": "If the procedure is outdated or unclear, route feedback to the process owner rather than inventing a workaround.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-029-S07",
+          "order": 7,
+          "label": "Escalate policy exceptions to the authorized decision-maker.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-029-S08",
+          "order": 8,
+          "label": "Confirm the user completed the process or has a named owner and next action.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-029-S09",
+          "order": 9,
+          "label": "Record the issue pattern and recommend knowledge/process improvements.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    },
+    {
+      "id": "HB-030",
+      "name": "Subscription, license, or marketplace access",
+      "category": "Marketplace & Subscriptions",
+      "trigger": "Request, change, renew, reclaim, or troubleshoot a product subscription or license",
+      "defaultPriority": "Normal",
+      "defaultAssignment": "Software Asset Management / Marketplace Operations",
+      "escalationPath": "Budget owner, vendor owner, Security, or Legal for exceptions",
+      "approvalRequired": true,
+      "status": "draft",
+      "version": "1.0.0",
+      "scope": "global_master",
+      "steps": [
+        {
+          "id": "HB-030-S01",
+          "order": 1,
+          "label": "Identify product/vendor, tenant, user or group, requested plan/seat, business purpose, and required duration.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-030-S02",
+          "order": 2,
+          "label": "Check existing subscriptions, assigned seats, usage, contract terms, renewal date, and available entitlements.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-030-S03",
+          "order": 3,
+          "label": "Confirm the product is approved for company use and review security, privacy, data residency, and integration requirements.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-030-S04",
+          "order": 4,
+          "label": "Obtain manager and budget-owner approval; route non-standard products or contract changes to Security/Legal/Procurement.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-030-S05",
+          "order": 5,
+          "label": "Check whether an existing license can be reassigned before purchasing another seat.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-030-S06",
+          "order": 6,
+          "label": "Provision the minimum required entitlement and apply appropriate role/access restrictions.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-030-S07",
+          "order": 7,
+          "label": "Verify activation and that the correct tenant/user received access.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-030-S08",
+          "order": 8,
+          "label": "Record vendor, SKU/plan, seat count, cost center, approver, renewal/expiry date, and owner.",
+          "required": true,
+          "completionEvidence": true
+        },
+        {
+          "id": "HB-030-S09",
+          "order": 9,
+          "label": "Set renewal/usage review reminders and reclaim unused or departed-user licenses under policy.",
+          "required": true,
+          "completionEvidence": true
+        }
+      ],
+      "completionRequirements": [
+        "User or accountable owner confirms outcome",
+        "Resolution summary records cause, action, verification, and remaining risk",
+        "Required approvals and evidence are attached or referenced",
+        "Related incident/problem/change/access request is linked when applicable"
+      ]
+    }
+  ]
+}
